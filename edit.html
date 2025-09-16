@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task App - Edit</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .task-list { list-style: none; padding: 0; }
+        .task-item { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .task-text { flex-grow: 1; }
+        button { background: #f44336; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+        button:hover { background: #d32f2f; }
+        form { margin-bottom: 20px; }
+        input[type="text"] { padding: 8px; width: 200px; }
+        input[type="submit"] { padding: 8px 15px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        input[type="submit"]:hover { background: #45a049; }
+        a { display: block; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Edit Tasks</h1>
+    <form id="add-task-form">
+        <input type="text" id="new-task" placeholder="Enter new task" required>
+        <input type="submit" value="Add Task">
+    </form>
+    <ul id="task-list" class="task-list"></ul>
+    <a href="index.html">Back to Tasks</a>
+
+    <script>
+        const taskList = document.getElementById('task-list');
+        const addForm = document.getElementById('add-task-form');
+        const newTaskInput = document.getElementById('new-task');
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                li.innerHTML = `
+                    <span class="task-text">${task.text}</span>
+                    <button onclick="deleteTask(${index})">Delete</button>
+                `;
+                taskList.appendChild(li);
+            });
+        }
+
+        function addTask(event) {
+            event.preventDefault();
+            const text = newTaskInput.value.trim();
+            if (text) {
+                tasks.push({ text, completed: false });
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                newTaskInput.value = '';
+                renderTasks();
+            }
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        addForm.addEventListener('submit', addTask);
+        renderTasks();
+    </script>
+</body>
+</html>
